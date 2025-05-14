@@ -1,0 +1,13 @@
+{% extends 'concerts/base.html' %}
+
+{% block content %}
+<h2>Book Seat</h2>
+<p>Row: {{ seat.row }}</p>
+<p>Seat: {{ seat.seat_number }}</p>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="user_name" placeholder="Your Name" required>
+    <input type="email" name="user_email" placeholder="Your Email" required>
+    <button type="submit">Book</button>
+</form>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends 'concerts/base.html' %}
+
+{% block content %}
+<div class="about-container">
+    <div class="about-header">
+        <h1>О нас</h1>
+        <div class="header-underline"></div>
+    </div>
+    
+    <div class="about-content">
+        <div class="about-section">
+            <div class="section-image">
+                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Концерт">
+            </div>
+            <div class="section-text">
+                <h2>Наша миссия</h2>
+                <p>LIVE TICKETS — это онлайн-платформа, созданная с целью обеспечить быстрый и удобный доступ к билетам на самые интересные концерты и мероприятия. Мы стремимся сделать процесс покупки билетов максимально простым и приятным.</p>
+                <p>Наша цель — соединить любителей живой музыки с их любимыми исполнителями, предоставляя возможность насладиться незабываемыми впечатлениями от концертов.</p>
+            </div>
+        </div>
+        
+        <div class="about-section reverse">
+            <div class="section-image">
+                <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Музыкальное событие">
+            </div>
+            <div class="section-text">
+                <h2>Почему выбирают нас</h2>
+                <ul class="features-list">
+                    <li><span class="feature-icon">✓</span> Удобный выбор мест в зале с интерактивной схемой</li>
+                    <li><span class="feature-icon">✓</span> Мгновенное бронирование и подтверждение</li>
+                    <li><span class="feature-icon">✓</span> Большой выбор мероприятий различных жанров</li>
+                    <li><span class="feature-icon">✓</span> Безопасная и надежная система оплаты</li>
+                    <li><span class="feature-icon">✓</span> Персональный кабинет для управления билетами</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="about-section">
+            <div class="section-image">
+                <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Музыкальные фанаты">
+            </div>
+            <div class="section-text">
+                <h2>Наша команда</h2>
+                <p>Мы — команда энтузиастов, объединенных любовью к музыке и искусству. Наш опыт в организации мероприятий и IT-разработке позволяет нам создавать инновационные решения для билетных сервисов.</p>
+                <p>Мы постоянно работаем над улучшением нашей платформы, чтобы сделать ваш опыт максимально комфортным и положительным.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="contact-section" id="contact">
+        <h2>Свяжитесь с нами</h2>
+        <div class="contact-info">
+            <div class="contact-item">
+                <span class="contact-icon">📧</span>
+                <p>support@livetickets.com</p>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">☎️</span>
+                <p>+7 (900) 123-45-67</p>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">📍</span>
+                <p>г. Москва, ул. Концертная, д. 42</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .about-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .about-header h1 {
+        font-size: 2.8rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .header-underline {
+        height: 4px;
+        width: 100px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        margin: 0 auto;
+        border-radius: 2px;
+    }
+    
+    .about-section {
+        display: flex;
+        margin-bottom: 5rem;
+        align-items: center;
+        gap: 3rem;
+    }
+    
+    .about-section.reverse {
+        flex-direction: row-reverse;
+    }
+    
+    .section-image {
+        flex: 1;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .section-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.5s ease;
+    }
+    
+    .section-image:hover img {
+        transform: scale(1.05);
+    }
+    
+    .section-text {
+        flex: 1;
+    }
+    
+    .section-text h2 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .section-text h2:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+    }
+    
+    .section-text p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 1rem;
+    }
+    
+    .features-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .features-list li {
+        padding: 0.7rem 0;
+        font-size: 1.1rem;
+        color: #555;
+        display: flex;
+        align-items: center;
+    }
+    
+    .feature-icon {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 25px;
+        height: 25px;
+        background: linear-gradient(135deg, #FF4136, #7FDBFF);
+        color: white;
+        border-radius: 50%;
+        margin-right: 15px;
+        font-size: 0.9rem;
+    }
+    
+    .contact-section {
+        background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
+        padding: 3rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    .contact-section h2 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 2rem;
+    }
+    
+    .contact-info {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-item p {
+        font-size: 1.1rem;
+        color: #444;
+    }
+    
+    @media (max-width: 900px) {
+        .about-section, .about-section.reverse {
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .contact-info {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,445 @@
+{% extends 'concerts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-header">
+        <h2 class="payment-title">Оплата билета</h2>
+    </div>
+    
+    <div class="payment-summary-card">
+        <h3 class="summary-title">Информация о заказе</h3>
+        <div class="summary-details">
+            <div class="summary-row">
+                <div class="summary-label">Концерт:</div>
+                <div class="summary-value">{{ concert.name }}</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Дата:</div>
+                <div class="summary-value">{{ concert.date|date:"d F Y, H:i" }}</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Место:</div>
+                <div class="summary-value">Ряд {{ seat.row }}, Место {{ seat.seat_number }}</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">ФИО:</div>
+                <div class="summary-value">{{ booking_data.full_name }}</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Телефон:</div>
+                <div class="summary-value">{{ booking_data.phone }}</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Email:</div>
+                <div class="summary-value">{{ booking_data.email }}</div>
+            </div>
+            <div class="summary-row total-row">
+                <div class="summary-label">Сумма к оплате:</div>
+                <div class="summary-value price">${{ price }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="payment-form-container">
+        <h3 class="form-title">Введите данные карты</h3>
+        <div class="payment-methods">
+            <div class="payment-method-icons">
+                <div class="card-icon visa-icon"></div>
+                <div class="card-icon mastercard-icon"></div>
+                <div class="card-icon amex-icon"></div>
+                <div class="card-icon mir-icon"></div>
+            </div>
+        </div>
+        
+        <form method="post" class="payment-form" id="payment-form">
+            {% csrf_token %}
+            
+            <div class="form-group card-number-group">
+                <label for="{{ form.card_number.id_for_label }}">{{ form.card_number.label }}</label>
+                {{ form.card_number }}
+                {% if form.card_number.errors %}
+                <div class="form-error">{{ form.card_number.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="{{ form.expiry_date.id_for_label }}">{{ form.expiry_date.label }}</label>
+                    {{ form.expiry_date }}
+                    {% if form.expiry_date.errors %}
+                    <div class="form-error">{{ form.expiry_date.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group half-width">
+                    <label for="{{ form.cvv.id_for_label }}">{{ form.cvv.label }}</label>
+                    {{ form.cvv }}
+                    {% if form.cvv.errors %}
+                    <div class="form-error">{{ form.cvv.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.card_holder.id_for_label }}">{{ form.card_holder.label }}</label>
+                {{ form.card_holder }}
+                {% if form.card_holder.errors %}
+                <div class="form-error">{{ form.card_holder.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'seat_selection' seat.id %}" class="btn btn-secondary">Назад</a>
+                <button type="submit" class="btn btn-primary" id="submit-payment">Оплатить ${{ price }}</button>
+            </div>
+        </form>
+        
+        <div class="payment-info">
+            <p>Это тестовая форма оплаты. Для проверки используйте следующие данные:</p>
+            <ul>
+                <li>Карта: 1234 5678 9012 3456</li>
+                <li>Срок: 12/25</li>
+                <li>CVV: 123</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="payment-processing-modal" id="payment-modal">
+    <div class="modal-content">
+        <div class="spinner"></div>
+        <h3>Обработка платежа</h3>
+        <p>Пожалуйста, не закрывайте эту страницу...</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentForm = document.getElementById('payment-form');
+    const submitButton = document.getElementById('submit-payment');
+    const paymentModal = document.getElementById('payment-modal');
+    
+    // Простая маска для номера карты: добавление пробелов между группами цифр
+    const cardNumberInput = document.querySelector('input[name="card_number"]');
+    cardNumberInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s+/g, '');
+        if (value.length > 0) {
+            value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
+        }
+        e.target.value = value;
+    });
+    
+    // Маска для даты истечения срока действия
+    const expiryDateInput = document.querySelector('input[name="expiry_date"]');
+    expiryDateInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 2) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4);
+        }
+        e.target.value = value;
+    });
+    
+    // Показать модальное окно при отправке формы
+    paymentForm.addEventListener('submit', function(e) {
+        // Проверяем форму перед отправкой
+        if (paymentForm.checkValidity()) {
+            submitButton.disabled = true;
+            paymentModal.style.display = 'flex';
+        }
+    });
+});
+</script>
+
+<style>
+.payment-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.payment-title {
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+}
+
+.payment-summary-card, .payment-form-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.summary-title, .form-title {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.summary-details {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.summary-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.summary-value {
+    color: #333;
+}
+
+.summary-value.price {
+    font-weight: 700;
+    color: #2ecc71;
+    font-size: 18px;
+}
+
+.total-row {
+    margin-top: 10px;
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+    border-bottom: none;
+}
+
+.payment-methods {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.payment-method-icons {
+    display: flex;
+    gap: 10px;
+}
+
+.card-icon {
+    width: 50px;
+    height: 30px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #333;
+}
+
+.visa-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCA1MCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTE4LjUgMTloNi4ybC0zLjctOS41TDE4LjUgMTl6IiBmaWxsPSIjMTQzNDg0Ii8+PHBhdGggZD0iTTIwLjggOC41YS43LjcgMCAwIDAtLjcuNGwtNC40IDEwLjFoM2wuNy0xLjhoNG4ybC4zLjhoM2wtMy41LTEwLjVoLTIuNnoiIGZpbGw9IiMxNDM0ODQiLz48cGF0aCBkPSJNMTIuNSAxOS4xbDIuNy05LjNjLjItLjYuOC0xIDEuNC0xaDIuOGwtLjUgMS42aDIuNWwuOC0yLjZoLTUuOGMtMS4zIDAtMi41LjgtMyAyTDEwIDEvdjIuOXoiIGZpbGw9IiMzYzU4YmYiLz48L3N2Zz4=');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.mastercard-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCA1MCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIGZpbGw9IndoaXRlIi8+PGNpcmNsZSBjeD0iMTkiIGN5PSIxNSIgcj0iOCIgZmlsbD0iI2ViMDAxYiIvPjxjaXJjbGUgY3g9IjMxIiBjeT0iMTUiIHI9IjgiIGZpbGw9IiNmNzljMDAiLz48cGF0aCBkPSJNMjUgOWMzLjEgMCA1LjkgMS41IDcuNyAzLjlBOC4xIDguMSAwIDAgMCAyNSA3Yy00LjQgMC04IDMuNi04IDhzMy42IDggOCA4YzMuMSAwIDUuOS0xLjUgNy43LTMuOUE4LjEgOC4xIDAgMCAxIDI1IDIzYy00LjQgMC04LTMuNi04LThzMy42LTggOC04eiIgZmlsbD0iI2ZmNTUwMCIvPjwvc3ZnPg==');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.amex-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCA1MCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEwIDhIMjVhMyAzIDAgMCAxIDMgM3Y4YTMgMyAwIDAgMS0zIDNIMTBhMyAzIDAgMCAxLTMtM3YtOGEzIDMgMCAwIDEgMy0zeiIgZmlsbD0iIzAwNmZjZiIvPjxwYXRoIGQ9Ik0xNSAxMmwxIDNoMy41bC41LTEuNS41IDEuNUgyNGwxLTN2M2wxLjUgMi41TDI4IDEyaC0ybC0xIDMtMS0zaC00bC0xIDNIMTdsLTEtM2gtMSIgZmlsbD0id2hpdGUiLz48L3N2Zz4=');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.mir-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCA1MCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iMzAiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEwIDEwaDE1YTUgNSAwIDAgMSA1IDV2NWgtNXYtNWgtNXY1aC01di01aC01djVoLTV2LTVhNSA1IDAgMCAxIDUtNXoiIGZpbGw9IiMwRjc1NDUiLz48cGF0aCBkPSJNMzUgMTVoLTVhNSA1IDAgMCAwIDAgMTBoNXYtMTB6IiBmaWxsPSIjNDY5NmVlIi8+PC9zdmc+');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.payment-form .form-group {
+    margin-bottom: 20px;
+}
+
+.payment-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.payment-form input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.payment-form input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.half-width {
+    flex: 1;
+}
+
+.form-error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+}
+
+.btn-primary:disabled {
+    background-color: #95a5a6;
+    transform: none;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #555;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-secondary:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.payment-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+}
+
+.payment-info p {
+    margin: 0 0 10px 0;
+    color: #555;
+}
+
+.payment-info ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.payment-info li {
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.payment-processing-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.modal-content h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.modal-content p {
+    margin: 0;
+    color: #555;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .payment-container {
+        padding: 0 10px;
+    }
+}
+</style>
+{% endblock %} 

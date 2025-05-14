@@ -1,0 +1,242 @@
+{% extends 'concerts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100">
+                <circle cx="12" cy="12" r="11" fill="#2ecc71"/>
+                <path d="M10 15.172l-4.586-4.586L4 12l6 6 10-10-1.414-1.414z" fill="white"/>
+            </svg>
+        </div>
+        
+        <h2 class="success-title">Оплата успешно завершена!</h2>
+        
+        <div class="ticket-info">
+            <h3>Информация о билете</h3>
+            <div class="ticket-details">
+                <div class="detail-row">
+                    <div class="detail-label">Концерт:</div>
+                    <div class="detail-value">{{ concert.name }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Дата и время:</div>
+                    <div class="detail-value">{{ concert.date|date:"d F Y, H:i" }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Место:</div>
+                    <div class="detail-value">Ряд {{ seat.row }}, Место {{ seat.seat_number }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">ФИО:</div>
+                    <div class="detail-value">{{ booking.full_name }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="payment-info">
+            <h3>Информация об оплате</h3>
+            <div class="payment-details">
+                <div class="detail-row">
+                    <div class="detail-label">Номер платежа:</div>
+                    <div class="detail-value payment-id">{{ payment.payment_id }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Дата оплаты:</div>
+                    <div class="detail-value">{{ payment.payment_date|date:"d.m.Y H:i" }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Сумма:</div>
+                    <div class="detail-value">${{ payment.amount }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Карта:</div>
+                    <div class="detail-value">**** **** **** {{ payment.card_last_digits }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ticket-actions">
+            <a href="{% url 'profile' %}" class="btn btn-secondary">Перейти в личный кабинет</a>
+            <a href="{% url 'concert_detail' concert.id %}" class="btn btn-primary">Вернуться к концерту</a>
+        </div>
+        
+        <div class="ticket-note">
+            <p>Билет отправлен на указанный вами адрес электронной почты. Также вы можете найти информацию о билете в своем личном кабинете.</p>
+            <p>Для входа на концерт достаточно предъявить номер платежа или QR-код из письма.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.success-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+}
+
+.success-icon {
+    margin-bottom: 20px;
+    animation: scale-up 0.5s ease-out;
+}
+
+@keyframes scale-up {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.success-title {
+    font-size: 28px;
+    color: #2ecc71;
+    margin-bottom: 30px;
+}
+
+.ticket-info, .payment-info {
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.ticket-info h3, .payment-info h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.ticket-details, .payment-details {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #555;
+    width: 40%;
+}
+
+.detail-value {
+    color: #333;
+    width: 60%;
+}
+
+.payment-id {
+    font-family: monospace;
+    font-weight: 600;
+    color: #3498db;
+}
+
+.ticket-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-note {
+    background-color: #f1f9fe;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    text-align: left;
+    margin-top: 30px;
+    border-radius: 0 6px 6px 0;
+}
+
+.ticket-note p {
+    margin: 0 0 10px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.ticket-note p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .success-card {
+        padding: 20px;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+    }
+    
+    .detail-label, .detail-value {
+        width: 100%;
+    }
+    
+    .detail-label {
+        margin-bottom: 5px;
+    }
+    
+    .detail-row {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #eee;
+    }
+    
+    .ticket-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %} 

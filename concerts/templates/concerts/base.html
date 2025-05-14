@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Concert Tickets</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a1a1a, #333);
+            padding: 1.2rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #FF4136, #7FDBFF);
+            z-index: 3;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,65,54,0.1), rgba(127,219,255,0.1));
+            z-index: 1;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            padding: 0;
+        }
+
+        header h1 a {
+            color: white;
+            text-decoration: none;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        header h1 a:hover {
+            transform: translateY(-2px);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+        }
+        
+        header h1 a:hover .logo-icon {
+            transform: rotate(15deg);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        nav {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.7rem 1.3rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        nav a:hover::before {
+            left: 100%;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        nav a.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            position: relative;
+        }
+        
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30%;
+            height: 3px;
+            background: linear-gradient(to right, #FF4136, #7FDBFF);
+            border-radius: 3px;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .message.success {
+            background-color: #dcfce7;
+            border: 1px solid #22c55e;
+            color: #166534;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #1a1a1a, #333);
+            color: white;
+            padding: 3rem 0 2rem;
+            text-align: center;
+            margin-top: auto;
+            position: relative;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #FF4136, #7FDBFF);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            text-align: left;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(to right, #FF4136, #7FDBFF);
+        }
+        
+        .footer-section p {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-3px);
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        .footer-links a::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #FF4136;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 20px;
+        }
+        
+        .footer-links a:hover::before {
+            left: 5px;
+        }
+        
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem 0;
+            }
+
+            header h1 {
+                margin-bottom: 1rem;
+            }
+            
+            .logo {
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav a {
+                margin: 0.25rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-section {
+                min-width: 100%;
+            }
+            
+            .footer-section h3::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .social-icons {
+                justify-content: center;
+            }
+            
+            .footer-links a {
+                padding-left: 0;
+            }
+            
+            .footer-links a::before {
+                display: none;
+            }
+            
+            .footer-links a:hover {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #222; padding: 10px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+        <div class="header-content" style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+            <!-- Логотип слева -->
+            <div style="flex: 0 0 auto;">
+                <a href="/" style="color: #FF0000; text-decoration: none; font-size: 28px; font-weight: 700; text-transform: uppercase;">
+                    LIVE TICKETS
+                </a>
+            </div>
+            
+            <!-- Чистая минималистичная навигация -->
+            <div style="display: flex; align-items: center;">
+                <a href="/" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Главная</a>
+                <a href="{% url 'about_us' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">О нас</a>
+                
+                {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Личный кабинет</a>
+                <a href="{% url 'logout' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Выйти</a>
+                {% else %}
+                <a href="{% url 'login' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Войти</a>
+                <a href="{% url 'register' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Зарегистрироваться</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    {% if messages %}
+    <div style="padding: 1rem;">
+        {% for message in messages %}
+        <div class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>О компании</h3>
+                <p>LIVE TICKETS — современный сервис для бронирования билетов на концерты и мероприятия с удобным интерфейсом и широким выбором событий.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon">📱</a>
+                    <a href="#" class="social-icon">💻</a>
+                    <a href="#" class="social-icon">📷</a>
+                    <a href="#" class="social-icon">📺</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Полезные ссылки</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="{% url 'about_us' %}">О нас</a></li>
+                    <li><a href="{% url 'contacts' %}">Контакты</a></li>
+                    <li><a href="{% url 'privacy_policy' %}">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Контакты</h3>
+                <p>📍 г. Москва, ул. Концертная, д. 42</p>
+                <p>📞 +7 (900) 123-45-67</p>
+                <p>✉️ support@livetickets.com</p>
+            </div>
+
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 LIVE TICKETS. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

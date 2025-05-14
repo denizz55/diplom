@@ -1,0 +1,203 @@
+{% extends 'concerts/base.html' %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Авторизация</h2>
+            <p>Войдите в личный кабинет, чтобы получить доступ к билетам и заказам</p>
+        </div>
+        
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Ваше имя:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="login-button">Войти</button>
+            </div>
+            
+            <div class="form-footer">
+                <p>Ещё нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 20px;
+    }
+    
+    .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 450px;
+        padding: 40px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .login-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .login-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .login-header h2 {
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 10px;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .login-header h2:after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        border-radius: 3px;
+    }
+    
+    .login-header p {
+        color: #777;
+        font-size: 16px;
+        margin-top: 15px;
+    }
+    
+    .login-form .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .login-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+    }
+    
+    .login-form input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+    
+    .login-form input:focus {
+        border-color: #7FDBFF;
+        box-shadow: 0 0 0 3px rgba(127, 219, 255, 0.2);
+        outline: none;
+    }
+    
+    .password-container {
+        position: relative;
+    }
+    
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        user-select: none;
+        opacity: 0.6;
+        transition: opacity 0.3s;
+    }
+    
+    .password-toggle:hover {
+        opacity: 1;
+    }
+    
+    .login-button {
+        background: linear-gradient(135deg, #FF4136, #FF6B6B);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 15px 30px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(255, 65, 54, 0.3);
+    }
+    
+    .login-button:hover {
+        background: linear-gradient(135deg, #FF6B6B, #FF4136);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 65, 54, 0.4);
+    }
+    
+    .form-actions {
+        margin-top: 35px;
+    }
+    
+    .form-footer {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        color: #777;
+    }
+    
+    .form-footer a {
+        color: #FF4136;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    
+    .form-footer a:hover {
+        color: #FF6B6B;
+        text-decoration: underline;
+    }
+    
+    @media (max-width: 576px) {
+        .login-card {
+            padding: 30px 20px;
+        }
+        
+        .login-form input, .login-button {
+            padding: 12px;
+        }
+    }
+</style>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+        } else {
+            passwordInput.type = 'password';
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% extends 'concerts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="cancel-container">
+    <div class="cancel-card">
+        <div class="warning-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80" height="80">
+                <circle cx="12" cy="12" r="11" fill="#f39c12"/>
+                <path d="M12 6v8M12 16v2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        
+        <h2 class="cancel-title">Подтверждение отмены брони</h2>
+        
+        <div class="ticket-info">
+            <h3>Информация о билете</h3>
+            <div class="ticket-details">
+                <div class="detail-row">
+                    <div class="detail-label">Концерт:</div>
+                    <div class="detail-value">{{ booking.seat.concert.name }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Дата и время:</div>
+                    <div class="detail-value">{{ booking.seat.concert.date|date:"d F Y, H:i" }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Место:</div>
+                    <div class="detail-value">Ряд {{ booking.seat.row }}, Место {{ booking.seat.seat_number }}</div>
+                </div>
+                {% if booking.is_paid or booking.payment %}
+                <div class="detail-row">
+                    <div class="detail-label">Стоимость:</div>
+                    <div class="detail-value">${{ booking.seat.concert.price }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="refund-info">
+            {% if booking.is_paid or booking.payment %}
+            <div class="refund-alert">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill="#2ecc71"/>
+                </svg>
+                <p>Средства в размере ${{ booking.seat.concert.price }} будут возвращены на вашу карту в течение 3-5 рабочих дней.</p>
+            </div>
+            {% endif %}
+            <p class="cancel-warning">Вы действительно хотите отменить бронирование? Это действие нельзя будет отменить.</p>
+        </div>
+        
+        <div class="cancel-actions">
+            <a href="{% url 'profile' %}" class="btn btn-secondary">Вернуться</a>
+            <form method="post" action="{% url 'cancel_booking' booking.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Подтвердить отмену</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.cancel-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.cancel-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+}
+
+.warning-icon {
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.cancel-title {
+    font-size: 28px;
+    color: #e74c3c;
+    margin-bottom: 30px;
+}
+
+.ticket-info {
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.ticket-info h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.ticket-details {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #555;
+    width: 40%;
+}
+
+.detail-value {
+    color: #333;
+    width: 60%;
+}
+
+.refund-info {
+    margin-bottom: 30px;
+    text-align: left;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.refund-alert {
+    display: flex;
+    align-items: flex-start;
+    background-color: rgba(46, 204, 113, 0.1);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2ecc71;
+}
+
+.refund-alert svg {
+    flex-shrink: 0;
+    margin-right: 15px;
+}
+
+.refund-alert p {
+    margin: 0;
+    color: #333;
+    font-weight: 500;
+}
+
+.cancel-warning {
+    color: #e74c3c;
+    font-weight: 500;
+    margin: 0;
+}
+
+.cancel-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #555;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.btn-secondary:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    font-size: 14px;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+@media (max-width: 600px) {
+    .cancel-card {
+        padding: 20px;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+    }
+    
+    .detail-label, .detail-value {
+        width: 100%;
+    }
+    
+    .detail-label {
+        margin-bottom: 5px;
+    }
+    
+    .detail-row {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #eee;
+    }
+    
+    .cancel-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,190 @@
+{% extends 'concerts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="booking-container">
+    <div class="booking-header">
+        <h2 class="booking-title">Бронирование билета</h2>
+    </div>
+    
+    <div class="booking-info-card">
+        <div class="concert-details">
+            <div class="concert-name">{{ concert.name }}</div>
+            <div class="seat-details">Ряд {{ seat.row }}, Место {{ seat.seat_number }}</div>
+            <div class="concert-date">{{ concert.date|date:"d F Y, H:i" }}</div>
+            <div class="ticket-price">Стоимость: ${{ concert.price }}</div>
+        </div>
+    </div>
+    
+    <div class="booking-form-container">
+        <h3 class="form-title">Введите контактные данные</h3>
+        <form method="post" class="booking-form">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="form-error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div class="form-actions">
+                <a href="{% url 'concert_detail' concert.id %}" class="btn btn-secondary">Отмена</a>
+                <button type="submit" class="btn btn-primary">Перейти к оплате</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.booking-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.booking-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.booking-title {
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+}
+
+.booking-info-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.concert-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.seat-details {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.concert-date, .ticket-price {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.ticket-price {
+    font-weight: 600;
+    color: #2ecc71;
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+.booking-form-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.form-title {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.booking-form .form-group {
+    margin-bottom: 20px;
+}
+
+.booking-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.booking-form input[type="text"],
+.booking-form input[type="email"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.booking-form input[type="text"]:focus,
+.booking-form input[type="email"]:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.form-error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #555;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-secondary:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %} 

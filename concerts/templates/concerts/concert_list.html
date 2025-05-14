@@ -1,0 +1,600 @@
+{% extends 'concerts/base.html' %}
+{% load static %}
+{% block content %}
+<div class="banner">
+    <div class="banner-content">
+        <h1>Лучшие концерты в вашем городе</h1>
+        <p>Получите незабываемые впечатления от живых выступлений</p>
+        <a href="#concerts" class="banner-btn">Смотреть афишу</a>
+    </div>
+</div>
+
+<style>
+    .banner {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 7rem 2rem;
+        margin: -2rem -2rem 2rem -2rem;
+        text-align: center;
+        position: relative;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .banner::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        border-radius: 0 0 20px 20px;
+    }
+
+    .banner-content {
+        max-width: 800px;
+        margin: 0 auto;
+        color: white;
+    }
+
+    .banner h1 {
+        font-size: 3.2rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        font-weight: 700;
+    }
+
+    .banner p {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .banner-btn {
+        display: inline-block;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        color: white;
+        padding: 1rem 2.5rem;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .banner-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: all 0.5s ease;
+    }
+    
+    .banner-btn:hover::before {
+        left: 100%;
+    }
+
+    .banner-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    
+    .concerts-section {
+        max-width: 1200px;
+        margin: 0 auto 3rem;
+    }
+    
+    .section-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2.5rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 1.2rem;
+        font-weight: 700;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        border-radius: 3px;
+    }
+    
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 1.5rem;
+        justify-content: center;
+    }
+    
+    .filter-button {
+        padding: 0.7rem 1.4rem;
+        background-color: white;
+        border: 1px solid #e9e9e9;
+        border-radius: 30px;
+        color: #555;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.03);
+    }
+    
+    .filter-button:hover, .filter-button.active {
+        background: linear-gradient(to right, rgba(255, 65, 54, 0.08), rgba(127, 219, 255, 0.08));
+        border-color: rgba(255, 65, 54, 0.25);
+        color: #333;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .filter-button.active {
+        font-weight: 600;
+        background: linear-gradient(to right, rgba(255, 65, 54, 0.15), rgba(127, 219, 255, 0.15));
+        border-color: rgba(255, 65, 54, 0.35);
+        color: #222;
+    }
+    
+    .filter-button span {
+        position: relative;
+        z-index: 1;
+    }
+    
+    @media (max-width: 768px) {
+        .banner {
+            padding: 5rem 1rem;
+        }
+        
+        .banner h1 {
+            font-size: 2.2rem;
+        }
+        
+        .banner p {
+            font-size: 1.1rem;
+        }
+        
+        .section-title {
+            font-size: 1.7rem;
+            text-align: center;
+        }
+        
+        .filter-options {
+            justify-content: center;
+        }
+        
+        .filter-button {
+            padding: 0.6rem 1.1rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    .concert-card .price {
+        font-size: 1.25rem;
+        color: #2ecc71;
+        font-weight: bold;
+        margin: 1rem 0;
+    }
+
+    .concert-card .concert-rating {
+        display: flex;
+        align-items: center;
+        margin: 0.5rem 0;
+    }
+
+    .concert-card .rating-stars {
+        margin-right: 8px;
+    }
+
+    .concert-card .star {
+        color: #ccc;
+        font-size: 16px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .concert-card .star.filled {
+        color: #FFD700;
+    }
+    
+    /* Star Rating Styles */
+    .concert-card .stars-outer {
+        display: inline-block;
+        position: relative;
+        font-size: 16px;
+    }
+    
+    .concert-card .stars-outer::before {
+        content: "★★★★★";
+        color: #ccc;
+    }
+    
+    .concert-card .stars-inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 0;
+    }
+    
+    .concert-card .stars-inner::before {
+        content: "★★★★★";
+        color: #FFD700;
+    }
+
+    .concert-card .rating-text {
+        color: #777;
+        font-size: 14px;
+        margin-left: 8px;
+    }
+
+    .concert-card .btn-details {
+        display: inline-block;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        color: white;
+        padding: 1rem 2.5rem;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .concert-card .btn-details::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: all 0.5s ease;
+    }
+    
+    .concert-card .btn-details:hover::before {
+        left: 100%;
+    }
+
+    .concert-card .btn-details:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+</style>
+
+<div id="concerts" class="concerts-section">
+    <div class="section-header">
+        <h2 class="section-title">Список концертов</h2>
+        <div class="filter-options">
+            <button class="filter-button active" data-filter="all"><span>Все концерты</span></button>
+            <button class="filter-button" data-filter="upcoming"><span>Ближайшие</span></button>
+            <button class="filter-button" data-filter="price-asc"><span>Цена: по возрастанию</span></button>
+            <button class="filter-button" data-filter="price-desc"><span>Цена: по убыванию</span></button>
+            <button class="filter-button" data-filter="recommended"><span>Интересное для вас</span></button>
+        </div>
+    </div>
+    
+    <div class="concert-list">
+        {% for concert in concerts %}
+        <div class="concert-card" 
+             data-date="{{ concert.date|date:'Y-m-d' }}" 
+             data-price="{{ concert.price }}">
+            <img src="{{ concert.image.url }}" alt="{{ concert.name }}">
+            <div class="content">
+                <h3>{{ concert.name }}</h3>
+                <p><strong>Дата:</strong> {{ concert.date|date:"d.m.Y, H:i" }}</p>
+                
+                <!-- Отзывы -->
+                <div class="concert-rating">
+                    {% if concert.avg_rating %}
+                        <div class="stars-outer">
+                            <div class="stars-inner" style="width: {% widthratio concert.avg_rating 5 100 %}%"></div>
+                        </div>
+                        <span class="rating-text">{{ concert.avg_rating|floatformat:1 }} ({{ concert.review_count }})</span>
+                    {% else %}
+                        <div class="stars-outer">
+                            <div class="stars-inner" style="width: 0%"></div>
+                        </div>
+                        <span class="rating-text">Нет отзывов</span>
+                    {% endif %}
+                </div>
+                
+                <p class="price">${{ concert.price }}</p>
+                <a href="{{ concert.id }}/" class="btn-details">Подробнее</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if concerts|length == 0 %}
+    <p class="no-concerts">Концертов не найдено.</p>
+    {% endif %}
+</div>
+
+<!-- Music News Section -->
+<div class="music-news-section">
+    <div class="section-header">
+        <h2 class="section-title">Новости музыки</h2>
+    </div>
+    
+    <div class="news-grid">
+        <div class="news-card">
+            <div class="news-image">
+                <img src="https://images.unsplash.com/photo-1605722243979-fe0be8158232?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Новый альбом Земфиры">
+            </div>
+            <div class="news-content">
+                <h3>Земфира выпустила мини-альбом "Я не боюсь"</h3>
+                <p class="news-date">25 декабря 2024</p>
+                <p>Земфира порадовала поклонников новым мини-альбомом "Я не боюсь", который уже называют одним из самых ярких российских релизов года. Пять новых композиций получили восторженные отзывы критиков и слушателей.</p>
+            </div>
+        </div>
+        
+        <div class="news-card">
+            <div class="news-image">
+                <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Российская рок-сцена">
+            </div>
+            <div class="news-content">
+                <h3>Возрождение российской рок-сцены</h3>
+                <p class="news-date">18 декабря 2024</p>
+                <p>2024 год отмечен возвращением интереса к отечественному року. Новые релизы групп "БИ-2", "Сплин" и "Ногу Свело!" возглавили чарты музыкальных платформ, а фестиваль "Нашествие" собрал рекордное количество зрителей.</p>
+            </div>
+        </div>
+        
+        <div class="news-card">
+            <div class="news-image">
+                <img src="https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Баста тур">
+            </div>
+            <div class="news-content">
+                <h3>Баста объявил масштабный тур по России</h3>
+                <p class="news-date">10 декабря 2024</p>
+                <p>Рэпер Баста анонсировал большой концертный тур, который охватит более 30 городов России. Тур в поддержку нового альбома стартует в феврале 2025 года и продлится до конца года с заключительным шоу на стадионе "Лужники".</p>
+            </div>
+        </div>
+        
+        <div class="news-card">
+            <div class="news-image">
+                <img src="https://images.unsplash.com/photo-1619983081563-430f63602796?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Новые имена">
+            </div>
+            <div class="news-content">
+                <h3>Новые имена российской музыки</h3>
+                <p class="news-date">5 декабря 2024</p>
+                <p>Молодые исполнители активно заявляют о себе на российской сцене. Дора, Гречка, Кис-Кис и другие молодые артисты привносят свежий взгляд в отечественную музыку, экспериментируя со звучанием и подходом к созданию композиций.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Стили для секции новостей */
+    .music-news-section {
+        max-width: 1200px;
+        margin: 4rem auto;
+        padding: 0 2rem;
+    }
+    
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+        gap: 2rem;
+        margin-top: 2.5rem;
+    }
+    
+    .news-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .news-image {
+        height: 220px;
+        overflow: hidden;
+    }
+    
+    .news-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .news-card:hover .news-image img {
+        transform: scale(1.05);
+    }
+    
+    .news-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .news-content h3 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+    
+    .news-date {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .news-content p:not(.news-date) {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .news-grid {
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .news-image {
+            height: 180px;
+        }
+        
+        .news-content h3 {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const concertCards = document.querySelectorAll('.concert-card');
+        
+        // Helper to set active filter button
+        const setActiveFilter = (button) => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        };
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const filterValue = this.getAttribute('data-filter');
+                setActiveFilter(this);
+                
+                // Reset all cards' visibility
+                concertCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                
+                // Apply filters
+                switch(filterValue) {
+                    case 'all':
+                        // Show all, no additional filtering needed
+                        break;
+                        
+                    case 'upcoming':
+                        // Sort by upcoming date
+                        const today = new Date().toISOString().split('T')[0];
+                        
+                        // Convert to array for sorting
+                        const upcomingArray = Array.from(concertCards);
+                        upcomingArray.sort((a, b) => {
+                            const dateA = a.getAttribute('data-date');
+                            const dateB = b.getAttribute('data-date');
+                            return dateA.localeCompare(dateB);
+                        });
+                        
+                        // Reorder in the DOM
+                        const concertList = document.querySelector('.concert-list');
+                        upcomingArray.forEach(card => concertList.appendChild(card));
+                        break;
+                        
+                    case 'price-asc':
+                        // Sort by price (low to high)
+                        const ascArray = Array.from(concertCards);
+                        ascArray.sort((a, b) => {
+                            const priceA = parseFloat(a.getAttribute('data-price'));
+                            const priceB = parseFloat(b.getAttribute('data-price'));
+                            return priceA - priceB;
+                        });
+                        
+                        const ascList = document.querySelector('.concert-list');
+                        ascArray.forEach(card => ascList.appendChild(card));
+                        break;
+                        
+                    case 'price-desc':
+                        // Sort by price (high to low)
+                        const descArray = Array.from(concertCards);
+                        descArray.sort((a, b) => {
+                            const priceA = parseFloat(a.getAttribute('data-price'));
+                            const priceB = parseFloat(b.getAttribute('data-price'));
+                            return priceB - priceA;
+                        });
+                        
+                        const descList = document.querySelector('.concert-list');
+                        descArray.forEach(card => descList.appendChild(card));
+                        break;
+                        
+                    case 'recommended':
+                        // For demo purposes, show random recommendation order
+                        // In real app, this would use user preferences/history
+                        const recommendedArray = Array.from(concertCards);
+                        
+                        // Fisher-Yates shuffle algorithm
+                        for (let i = recommendedArray.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [recommendedArray[i], recommendedArray[j]] = [recommendedArray[j], recommendedArray[i]];
+                        }
+                        
+                        const recList = document.querySelector('.concert-list');
+                        recommendedArray.forEach(card => recList.appendChild(card));
+                        break;
+                }
+            });
+        });
+
+        // Initialize news cards animation on scroll
+        const newsCards = document.querySelectorAll('.news-card');
+        
+        function checkScroll() {
+            const triggerBottom = window.innerHeight * 0.8;
+            
+            newsCards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                
+                if (cardTop < triggerBottom) {
+                    card.style.opacity = 1;
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        }
+        
+        // Set initial state
+        newsCards.forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+        
+        // Check on load and scroll
+        window.addEventListener('scroll', checkScroll);
+        checkScroll(); // Initial check
+    });
+</script>
+{% endblock %} 

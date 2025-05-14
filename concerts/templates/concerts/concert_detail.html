@@ -1,0 +1,607 @@
+{% extends 'concerts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="concert-container">
+    <div class="concert-header">
+        <h2 class="concert-title">Концерт "{{ concert.name }}"</h2>
+    </div>
+    
+    <div class="concert-info-card">
+        <div class="concert-image-container">
+            <img src="{{ concert.image.url }}" alt="{{ concert.name }}" class="concert-image">
+        </div>
+        <div class="concert-details">
+            <div class="concert-description">{{ concert.description }}</div>
+            
+            <div class="concert-meta">
+                <div class="meta-item">
+                    <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"></path>
+                    </svg>
+                    <span>{{ concert.date|date:"d F Y, H:i" }}</span>
+                </div>
+                <div class="meta-item">
+                    <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path>
+                    </svg>
+                    <span>Концертный зал</span>
+                </div>
+                <div class="meta-item">
+                    <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"></path>
+                    </svg>
+                    <span>${{ concert.price }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="seating-section">
+        <h3 class="seating-title">Выберите место</h3>
+        
+        <div class="seating-container">
+            <div class="zoom-controls">
+                <button class="zoom-btn" id="zoom-in" title="Увеличить">
+                    <svg class="zoom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </button>
+                <button class="zoom-btn" id="zoom-out" title="Уменьшить">
+                    <svg class="zoom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M19 13H5v-2h14v2z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="stage-container">
+                <div class="stage-line">
+                    <div class="stage">СЦЕНА</div>
+                </div>
+            </div>
+            
+            <div class="seating-controls">
+                <button class="seating-control-btn" id="view-all">
+                    <svg class="seating-control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                    Все места
+                </button>
+                <button class="seating-control-btn" id="view-available">
+                    <svg class="seating-control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                    </svg>
+                    Свободные места
+                </button>
+                <button class="seating-control-btn" id="reset-view">
+                    <svg class="seating-control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    Сбросить
+                </button>
+            </div>
+            
+            <div class="seating-grid-container">
+                <div class="seating-grid" id="seating-grid">
+                    {% for row, seats in seating_chart.items %}
+                    <div class="row-container">
+                        <div class="row-label">{{ row }}</div>
+                        <div class="seats-row">
+                            {% for seat in seats %}
+                            <form method="post" action="{% url 'book_seat' seat.id %}" class="seat-form">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                    class="seat-button {% if seat.user == request.user %}seat-selected{% elif seat.is_booked %}seat-occupied{% else %}seat-free{% endif %}"
+                                    {% if seat.is_booked and seat.user != request.user %}disabled{% endif %}
+                                    data-row="{{ row }}" 
+                                    data-seat="{{ seat.seat_number }}"
+                                    data-status="{% if seat.user == request.user %}selected{% elif seat.is_booked %}occupied{% else %}free{% endif %}"
+                                >
+                                    {{ seat.seat_number }}
+                                </button>
+                                <div class="seat-tooltip">Ряд {{ row }}, Место {{ seat.seat_number }}</div>
+                            </form>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="seating-legend">
+                <div class="legend-item">
+                    <div class="legend-color color-free"></div>
+                    <span class="legend-text">Свободно</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color color-occupied"></div>
+                    <span class="legend-text">Занято</span>
+                </div>
+                <div class="legend-item" id="your-seat-legend">
+                    <div class="legend-color color-selected"></div>
+                    <span class="legend-text">Ваше место</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color color-premium"></div>
+                    <span class="legend-text">Премиум</span>
+                </div>
+            </div>
+            
+            <div class="seating-info">
+                Выберите нужное место, чтобы забронировать его на концерт. <strong>Премиум места</strong> (отмечены золотистым цветом) предлагают лучший обзор сцены и повышенный комфорт. Обратите внимание, что одно место может быть забронировано только один раз.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div class="reviews-section">
+    <h3 class="reviews-title">Отзывы о концерте</h3>
+    
+    <div class="reviews-summary">
+        <div class="rating-summary">
+            <div class="average-rating">
+                {% if avg_rating %}
+                    <div class="rating-value">{{ avg_rating|floatformat:1 }}</div>
+                    <div class="stars-outer">
+                        <div class="stars-inner" style="width: {% widthratio avg_rating 5 100 %}%"></div>
+                    </div>
+                {% else %}
+                    <div class="rating-value">-.-</div>
+                    <div class="stars-outer">
+                        <div class="stars-inner" style="width: 0%"></div>
+                    </div>
+                {% endif %}
+                <div class="rating-count">{{ review_count }} отзыв{{ review_count|pluralize:"ов" }}</div>
+            </div>
+        </div>
+        
+        {% if can_review %}
+        <div class="add-review-btn-container">
+            <a href="{% url 'add_review' concert.id %}" class="btn-add-review">Оставить отзыв</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if user_review %}
+    <div class="my-review">
+        <h4>Ваш отзыв</h4>
+        <div class="review-card user-review">
+            <div class="review-header">
+                <div class="review-user">{{ user_review.user.username }}</div>
+                <div class="review-date">{{ user_review.created_at|date:"d.m.Y" }}</div>
+            </div>
+            <div class="review-rating">
+                <div class="stars-outer review-stars">
+                    <div class="stars-inner" style="width: {% widthratio user_review.rating 5 100 %}%"></div>
+                </div>
+            </div>
+            <div class="review-comment">{{ user_review.comment }}</div>
+            <div class="review-actions">
+                <a href="{% url 'edit_review' user_review.id %}" class="btn-edit-review">Редактировать</a>
+                <a href="{% url 'delete_review' user_review.id %}" class="btn-delete-review">Удалить</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="reviews-list">
+        {% if reviews %}
+            {% for review in reviews %}
+                {% if review.user != request.user %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-user">{{ review.user.username }}</div>
+                        <div class="review-date">{{ review.created_at|date:"d.m.Y" }}</div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars-outer review-stars">
+                            <div class="stars-inner" style="width: {% widthratio review.rating 5 100 %}%"></div>
+                        </div>
+                    </div>
+                    <div class="review-comment">{{ review.comment }}</div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="no-reviews">
+                <p>Пока никто не оставил отзыв об этом концерте. Будьте первым!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seatingGrid = document.getElementById('seating-grid');
+    const zoomIn = document.getElementById('zoom-in');
+    const zoomOut = document.getElementById('zoom-out');
+    const viewAll = document.getElementById('view-all');
+    const viewAvailable = document.getElementById('view-available');
+    const resetView = document.getElementById('reset-view');
+    
+    let currentScale = 1;
+    const minScale = 0.6;
+    const maxScale = 1.5;
+    
+    // Zoom functionality
+    zoomIn.addEventListener('click', function() {
+        if (currentScale < maxScale) {
+            currentScale += 0.1;
+            applyScale();
+        }
+    });
+    
+    zoomOut.addEventListener('click', function() {
+        if (currentScale > minScale) {
+            currentScale -= 0.1;
+            applyScale();
+        }
+    });
+    
+    function applyScale() {
+        seatingGrid.style.transform = `perspective(1000px) rotateX(5deg) scale(${currentScale})`;
+    }
+    
+    // View filters
+    viewAll.addEventListener('click', function() {
+        showAllSeats();
+    });
+    
+    viewAvailable.addEventListener('click', function() {
+        showOnlyAvailableSeats();
+    });
+    
+    resetView.addEventListener('click', function() {
+        resetFilters();
+        currentScale = 1;
+        applyScale();
+    });
+    
+    function showAllSeats() {
+        const rows = document.querySelectorAll('.row-container');
+        rows.forEach(row => {
+            row.style.display = 'flex';
+        });
+    }
+    
+    function showOnlyAvailableSeats() {
+        const seats = document.querySelectorAll('.seat-button');
+        seats.forEach(seat => {
+            const status = seat.getAttribute('data-status');
+            const row = seat.closest('.row-container');
+            
+            if (status === 'occupied') {
+                seat.style.opacity = '0.3';
+            } else {
+                seat.style.opacity = '1';
+            }
+        });
+    }
+    
+    function resetFilters() {
+        const seats = document.querySelectorAll('.seat-button');
+        seats.forEach(seat => {
+            seat.style.opacity = '1';
+        });
+    }
+    
+    // Highlight row and column on hover
+    const seatButtons = document.querySelectorAll('.seat-button');
+    seatButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            const row = this.getAttribute('data-row');
+            const seat = this.getAttribute('data-seat');
+            
+            // Highlight same row
+            document.querySelectorAll(`.seat-button[data-row="${row}"]`).forEach(s => {
+                if (s !== this) s.classList.add('highlight-same-row');
+            });
+            
+            // Highlight same column (seat number)
+            document.querySelectorAll(`.seat-button[data-seat="${seat}"]`).forEach(s => {
+                if (s !== this) s.classList.add('highlight-same-column');
+            });
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            document.querySelectorAll('.highlight-same-row, .highlight-same-column').forEach(s => {
+                s.classList.remove('highlight-same-row');
+                s.classList.remove('highlight-same-column');
+            });
+        });
+    });
+    
+    // Premium seats in the center of the hall
+    function assignPremiumSeats() {
+        // Define premium section with 4 seats per row in rows 4-6
+        const premiumRows = [4, 5, 6];
+        const premiumSeats = [5, 6, 7, 8];
+        
+        premiumRows.forEach(row => {
+            premiumSeats.forEach(seatNum => {
+                const seatButton = document.querySelector(`.seat-button[data-row="${row}"][data-seat="${seatNum}"]`);
+                if (seatButton && !seatButton.disabled) {
+                    seatButton.classList.add('seat-premium');
+                    seatButton.classList.remove('seat-free');
+                    seatButton.setAttribute('data-status', 'premium');
+                }
+            });
+        });
+    }
+    
+    assignPremiumSeats();
+    
+    // Make sure selected (user) seats are properly styled
+    document.querySelectorAll('.seat-button[data-status="selected"]').forEach(seat => {
+        // Force the correct styling for user's seats
+        seat.classList.remove('seat-occupied', 'seat-free', 'seat-premium');
+        seat.classList.add('seat-selected');
+        // Make sure these seats aren't disabled
+        seat.disabled = false;
+    });
+    
+    // Debug log to verify user seats
+    console.log("User seats found:", document.querySelectorAll('.seat-selected').length);
+});
+</script>
+
+<style>
+/* Reviews section styles */
+.reviews-section {
+    margin-top: 60px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.reviews-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 25px;
+    text-align: center;
+    position: relative;
+}
+
+.reviews-title:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, #3498db, #2ecc71);
+    border-radius: 3px;
+}
+
+.reviews-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.rating-summary {
+    display: flex;
+    align-items: center;
+}
+
+.average-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rating-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.stars-outer {
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.stars-outer::before {
+    content: "★★★★★";
+    color: #ccc;
+}
+
+.stars-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+}
+
+.stars-inner::before {
+    content: "★★★★★";
+    color: #FFD700;
+}
+
+.star {
+    color: #ccc;
+    font-size: 20px;
+}
+
+.star.filled {
+    color: #FFD700;
+}
+
+.star.half-filled {
+    position: relative;
+    display: inline-block;
+}
+
+.star.half-filled:before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #FFD700;
+}
+
+.rating-count {
+    font-size: 14px;
+    color: #777;
+}
+
+.add-review-btn-container {
+    display: flex;
+    align-items: center;
+}
+
+.btn-add-review {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+}
+
+.btn-add-review:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+}
+
+.my-review {
+    margin-bottom: 30px;
+}
+
+.my-review h4 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.review-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.user-review {
+    border-left: 4px solid #3498db;
+    background-color: #f8f9fa;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.review-user {
+    font-weight: 600;
+    color: #333;
+}
+
+.review-date {
+    color: #777;
+    font-size: 14px;
+}
+
+.review-rating {
+    margin-bottom: 12px;
+}
+
+.review-comment {
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.review-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-edit-review, .btn-delete-review {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-review {
+    background-color: #f5f5f5;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.btn-edit-review:hover {
+    background-color: #e9e9e9;
+    color: #333;
+}
+
+.btn-delete-review {
+    background-color: #fff5f5;
+    color: #e74c3c;
+    border: 1px solid #ffdfdf;
+}
+
+.btn-delete-review:hover {
+    background-color: #ffe5e5;
+    color: #c0392b;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 40px 0;
+    color: #777;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .reviews-summary {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .review-header {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+.review-stars {
+    display: inline-block;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}

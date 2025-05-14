@@ -1,0 +1,301 @@
+{% extends 'concerts/base.html' %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h2>Регистрация</h2>
+            <p>Создайте аккаунт, чтобы получить доступ к покупке билетов на концерты</p>
+        </div>
+        
+        <form method="post" id="register-form" class="register-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <small class="form-hint">Обязательно. До 150 символов. Только буквы, цифры и @/./+/-/_</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password1">Пароль:</label>
+                <div class="password-container">
+                    <input type="password" id="password1" name="password1" required>
+                    <span class="password-toggle" onclick="togglePassword('password1')">👁️</span>
+                </div>
+                <ul class="password-requirements">
+                    <li>Пароль не должен быть похож на другую вашу личную информацию</li>
+                    <li>Должен содержать минимум 8 символов</li>
+                    <li>Не должен быть простым и распространенным</li>
+                    <li>Не может состоять только из цифр</li>
+                </ul>
+            </div>
+            
+            <div class="form-group">
+                <label for="password2">Подтверждение пароля:</label>
+                <div class="password-container">
+                    <input type="password" id="password2" name="password2" required>
+                    <span class="password-toggle" onclick="togglePassword('password2')">👁️</span>
+                </div>
+                <small class="form-hint">Введите тот же пароль для проверки</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="register-button">Зарегистрироваться</button>
+            </div>
+            
+            <div class="form-footer">
+                <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 20px;
+        margin: 30px 0;
+    }
+    
+    .register-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 550px;
+        padding: 40px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .register-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .register-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .register-header h2 {
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 10px;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .register-header h2:after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        border-radius: 3px;
+    }
+    
+    .register-header p {
+        color: #777;
+        font-size: 16px;
+        margin-top: 15px;
+    }
+    
+    .register-form .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .register-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+    }
+    
+    .register-form input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+    
+    .register-form input:focus {
+        border-color: #7FDBFF;
+        box-shadow: 0 0 0 3px rgba(127, 219, 255, 0.2);
+        outline: none;
+    }
+    
+    .form-hint {
+        display: block;
+        margin-top: 6px;
+        color: #888;
+        font-size: 14px;
+    }
+    
+    .password-container {
+        position: relative;
+    }
+    
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        user-select: none;
+        opacity: 0.6;
+        transition: opacity 0.3s;
+    }
+    
+    .password-toggle:hover {
+        opacity: 1;
+    }
+    
+    .password-requirements {
+        margin: 10px 0 0;
+        padding-left: 20px;
+        font-size: 14px;
+        color: #777;
+    }
+    
+    .password-requirements li {
+        margin-bottom: 4px;
+    }
+    
+    .register-button {
+        background: linear-gradient(135deg, #FF4136, #FF6B6B);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 15px 30px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(255, 65, 54, 0.3);
+    }
+    
+    .register-button:hover {
+        background: linear-gradient(135deg, #FF6B6B, #FF4136);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 65, 54, 0.4);
+    }
+    
+    .form-actions {
+        margin-top: 35px;
+    }
+    
+    .form-footer {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        color: #777;
+    }
+    
+    .form-footer a {
+        color: #FF4136;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    
+    .form-footer a:hover {
+        color: #FF6B6B;
+        text-decoration: underline;
+    }
+    
+    @media (max-width: 576px) {
+        .register-card {
+            padding: 30px 20px;
+        }
+        
+        .register-form input, .register-button {
+            padding: 12px;
+        }
+    }
+</style>
+
+<script>
+    function togglePassword(id) {
+        const passwordInput = document.getElementById(id);
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+        } else {
+            passwordInput.type = 'password';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // First make a request to the CSRF token endpoint to ensure we have a valid token
+        fetch('/set-csrf/', {
+            method: 'GET',
+            credentials: 'include',  // This is important to ensure cookies are sent
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log('CSRF token set:', data);
+            
+            // Function to get a cookie value
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            // Get the CSRF token from cookie
+            const csrftoken = getCookie('csrftoken');
+            console.log('CSRF token from cookie:', csrftoken);
+            
+            // Update the form's CSRF token
+            if (csrftoken) {
+                const tokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                if (tokenInput) {
+                    tokenInput.value = csrftoken;
+                    console.log('Updated form token to:', csrftoken);
+                }
+            }
+            
+            // Handle form submission
+            const form = document.getElementById('register-form');
+            form.addEventListener('submit', function(e) {
+                // Update the token one more time just before submission
+                const latestToken = getCookie('csrftoken');
+                if (latestToken) {
+                    const tokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                    if (tokenInput) {
+                        tokenInput.value = latestToken;
+                        console.log('Final token update before submit:', latestToken);
+                    }
+                }
+            });
+        }).catch(function(error) {
+            console.error('Error fetching CSRF token:', error);
+        });
+    });
+</script>
+{% endblock %}

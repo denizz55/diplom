@@ -1,0 +1,275 @@
+{% extends 'concerts/base.html' %}
+
+{% block content %}
+<div class="contacts-container">
+    <div class="page-header">
+        <h1>Контакты</h1>
+        <div class="header-underline"></div>
+    </div>
+    
+    <div class="contacts-content">
+        <div class="contact-info-section">
+            <h2>Наши контактные данные</h2>
+            <div class="contact-details">
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-text">
+                        <h3>Адрес</h3>
+                        <p>г. Москва, ул. Концертная, д. 42</p>
+                        <p>БЦ "Мелодия", 3 этаж</p>
+                    </div>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">☎️</div>
+                    <div class="contact-text">
+                        <h3>Телефон</h3>
+                        <p>+7 (900) 123-45-67</p>
+                        <p>Ежедневно с 9:00 до 21:00</p>
+                    </div>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-text">
+                        <h3>Электронная почта</h3>
+                        <p>support@livetickets.com</p>
+                        <p>Время ответа: до 24 часов</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="map-section">
+            <h2>Мы на карте</h2>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2244.397087990662!2d37.62554531592745!3d55.75639998055642!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a50b315e573%3A0xa886bf5a3d9b2e68!2z0JzQvtGB0LrQvtCy0YHQutC40Lkg0JrRgNC10LzQu9GM!5e0!3m2!1sru!2sru!4v1625764980950!5m2!1sru!2sru" 
+                    width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        
+        <div class="hours-section">
+            <h2>Режим работы</h2>
+            <div class="hours-details">
+                <div class="hours-card">
+                    <h3>Офис поддержки клиентов</h3>
+                    <ul>
+                        <li><span>Понедельник - Пятница:</span> 9:00 - 21:00</li>
+                        <li><span>Суббота:</span> 10:00 - 18:00</li>
+                        <li><span>Воскресенье:</span> 10:00 - 16:00</li>
+                    </ul>
+                </div>
+                
+                <div class="hours-card">
+                    <h3>Онлайн-чат</h3>
+                    <ul>
+                        <li><span>Ежедневно:</span> 24/7</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="social-section">
+            <h2>Мы в социальных сетях</h2>
+            <div class="social-icons-large">
+                <a href="#" class="social-icon-large">
+                    <span>📱</span>
+                    <p>Twitter</p>
+                </a>
+                <a href="#" class="social-icon-large">
+                    <span>💻</span>
+                    <p>Facebook</p>
+                </a>
+                <a href="#" class="social-icon-large">
+                    <span>📷</span>
+                    <p>Instagram</p>
+                </a>
+                <a href="#" class="social-icon-large">
+                    <span>📺</span>
+                    <p>YouTube</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .contacts-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2.8rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .header-underline {
+        height: 4px;
+        width: 100px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+        margin: 0 auto;
+        border-radius: 2px;
+    }
+    
+    .contacts-content > div {
+        margin-bottom: 4rem;
+    }
+    
+    .contacts-content h2 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .contacts-content h2:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, #FF4136, #7FDBFF);
+    }
+    
+    .contact-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: space-between;
+    }
+    
+    .contact-card {
+        flex: 1;
+        min-width: 300px;
+        display: flex;
+        align-items: flex-start;
+        padding: 1.5rem;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .contact-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .contact-icon {
+        font-size: 2.5rem;
+        margin-right: 1.5rem;
+        color: #333;
+    }
+    
+    .contact-text h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+        color: #333;
+    }
+    
+    .contact-text p {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .map-container {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    .hours-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+    
+    .hours-card {
+        flex: 1;
+        min-width: 300px;
+        padding: 1.5rem;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    .hours-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    .hours-card ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .hours-card li {
+        padding: 0.5rem 0;
+        color: #666;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .hours-card li:last-child {
+        border-bottom: none;
+    }
+    
+    .hours-card li span {
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .social-icons-large {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+    
+    .social-icon-large {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+    
+    .social-icon-large span {
+        font-size: 3rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .social-icon-large p {
+        color: #333;
+        font-size: 1.1rem;
+    }
+    
+    .social-icon-large:hover {
+        transform: translateY(-5px);
+    }
+    
+    @media (max-width: 768px) {
+        .contact-details, .hours-details {
+            flex-direction: column;
+        }
+        
+        .contact-card, .hours-card {
+            min-width: 100%;
+        }
+        
+        .social-icons-large {
+            gap: 1.5rem;
+        }
+    }
+</style>
+{% endblock %} 
