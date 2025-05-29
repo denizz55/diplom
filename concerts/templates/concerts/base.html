@@ -401,6 +401,9 @@
                 <a href="{% url 'about_us' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">О нас</a>
                 
                 {% if user.is_authenticated %}
+                {% if user.is_staff or user.is_superuser %}
+                <a href="{% url 'admin_dashboard' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Админ-панель</a>
+                {% endif %}
                 <a href="{% url 'profile' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Личный кабинет</a>
                 <a href="{% url 'logout' %}" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 16px; background: none; border: none; padding: 0;">Выйти</a>
                 {% else %}

@@ -28,4 +28,7 @@ urlpatterns = [
     
     # API для поиска концертов
     path('api/search-concerts/', views.search_concerts_api, name='search_concerts_api'),
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('concert/<int:concert_id>/delete/', views.delete_concert, name='delete_concert'),
+    path('concert/<int:concert_id>/edit/', views.edit_concert, name='edit_concert'),
 ]

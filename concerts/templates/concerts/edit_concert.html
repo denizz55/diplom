@@ -1,0 +1,100 @@
+{% extends 'concerts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="admin-dashboard-container">
+    <h1>Редактировать концерт: {{ concert.name }}</h1>
+    <div class="admin-section">
+        <form method="post" enctype="multipart/form-data" class="admin-concert-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="form-error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a href="{% url 'admin_dashboard' %}" class="btn-cancel" style="margin-left: 15px;">Отмена</a>
+        </form>
+    </div>
+</div>
+<style>
+.admin-dashboard-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.admin-section {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    padding: 30px;
+    margin-bottom: 40px;
+}
+.admin-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.admin-concert-form .form-group {
+    margin-bottom: 18px;
+}
+.admin-concert-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+}
+.admin-concert-form input, .admin-concert-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+.admin-concert-form input:focus, .admin-concert-form textarea:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+}
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(41,128,185,0.2);
+}
+.btn-cancel {
+    background-color: #f5f5f5;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+.btn-cancel:hover {
+    background-color: #e9e9e9;
+    color: #333;
+}
+.form-error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+</style>
+{% endblock %} 

@@ -11,7 +11,8 @@ class Concert(models.Model):
     date = models.DateTimeField()
     description = models.TextField()
     image = models.ImageField(upload_to='concert_images/')
-    price = models.DecimalField(max_digits=8, decimal_places=2, default=20.00)
+    price = models.IntegerField(default=2000, verbose_name='Стоимость (₽)')
+    vip_price = models.IntegerField(default=4000, verbose_name='Стоимость VIP (₽)')
 
     def delete(self, *args, **kwargs):
         Booking.objects.filter(seat__concert=self).delete()
@@ -26,6 +27,7 @@ class Seat(models.Model):
     seat_number = models.IntegerField()
     is_booked = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    is_vip = models.BooleanField(default=False, verbose_name='VIP-место')
 
     class Meta:
         unique_together = ('concert', 'row', 'seat_number')
@@ -39,7 +41,8 @@ def create_seating_chart(sender, instance, created, **kwargs):
     if created:
         for row in range(1, 11): 
             for seat in range(1, 13):  
-                Seat.objects.create(concert=instance, row=row, seat_number=seat)
+                is_vip = row in [4, 5, 6] and seat in [5, 6, 7, 8]
+                Seat.objects.create(concert=instance, row=row, seat_number=seat, is_vip=is_vip)
 
 class Booking(models.Model):
     seat = models.OneToOneField(Seat, related_name='booking', on_delete=models.CASCADE)

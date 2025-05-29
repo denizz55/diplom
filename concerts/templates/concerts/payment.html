@@ -36,7 +36,7 @@
             </div>
             <div class="summary-row total-row">
                 <div class="summary-label">Сумма к оплате:</div>
-                <div class="summary-value price">${{ price }}</div>
+                <div class="summary-value price">{{ price }} ₽</div>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@
             
             <div class="form-actions">
                 <a href="{% url 'seat_selection' seat.id %}" class="btn btn-secondary">Назад</a>
-                <button type="submit" class="btn btn-primary" id="submit-payment">Оплатить ${{ price }}</button>
+                <button type="submit" class="btn btn-primary" id="submit-payment">Оплатить {{ price }} ₽</button>
             </div>
         </form>
         

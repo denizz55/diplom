@@ -31,7 +31,7 @@
                 {% if booking.is_paid or booking.payment %}
                 <div class="detail-row">
                     <div class="detail-label">Стоимость:</div>
-                    <div class="detail-value">${{ booking.seat.concert.price }}</div>
+                    <div class="detail-value">${% if booking.seat.is_vip %}{{ booking.seat.concert.vip_price }}{% else %}{{ booking.seat.concert.price }}{% endif %}</div>
                 </div>
                 {% endif %}
             </div>
@@ -43,7 +43,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill="#2ecc71"/>
                 </svg>
-                <p>Средства в размере ${{ booking.seat.concert.price }} будут возвращены на вашу карту в течение 3-5 рабочих дней.</p>
+                <p>Средства в размере ${% if booking.seat.is_vip %}{{ booking.seat.concert.vip_price }}{% else %}{{ booking.seat.concert.price }}{% endif %} будут возвращены на вашу карту в течение 3-5 рабочих дней.</p>
             </div>
             {% endif %}
             <p class="cancel-warning">Вы действительно хотите отменить бронирование? Это действие нельзя будет отменить.</p>

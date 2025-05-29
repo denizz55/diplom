@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Review, Booking
+from .models import Review, Booking, Concert
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -122,3 +122,21 @@ class PaymentForm(forms.Form):
         if not cvv.isdigit() or len(cvv) != 3:
             raise forms.ValidationError("CVV должен содержать 3 цифры")
         return cvv
+
+class ConcertForm(forms.ModelForm):
+    price = forms.IntegerField(
+        min_value=0,
+        label='Стоимость (₽)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Например, 2500'})
+    )
+    vip_price = forms.IntegerField(
+        min_value=0,
+        label='Стоимость VIP (₽)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Например, 4000'})
+    )
+    class Meta:
+        model = Concert
+        fields = ['name', 'date', 'description', 'image', 'price', 'vip_price']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }

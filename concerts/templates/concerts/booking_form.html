@@ -12,7 +12,7 @@
             <div class="concert-name">{{ concert.name }}</div>
             <div class="seat-details">Ряд {{ seat.row }}, Место {{ seat.seat_number }}</div>
             <div class="concert-date">{{ concert.date|date:"d F Y, H:i" }}</div>
-            <div class="ticket-price">Стоимость: ${{ concert.price }}</div>
+            <div class="ticket-price">Стоимость: {% if seat.is_vip %}{{ concert.vip_price }}{% else %}{{ concert.price }}{% endif %} ₽</div>
         </div>
     </div>
     

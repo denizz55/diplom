@@ -48,6 +48,12 @@
                                         </svg>
                                         <span>Ряд {{ booking.seat.row }}, Место {{ booking.seat.seat_number }}</span>
                                     </div>
+                                    <div class="ticket-meta-item">
+                                        <svg class="ticket-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                        </svg>
+                                        <span>Стоимость: {% if booking.seat.is_vip %}{{ booking.seat.concert.vip_price }}{% else %}{{ booking.seat.concert.price }}{% endif %} ₽</span>
+                                    </div>
                                 </div>
                                 <div class="ticket-actions">
                                     <a href="{% url 'cancel_booking' booking.id %}" class="btn-cancel">

@@ -3,10 +3,10 @@ from .models import Concert, Seat, Booking, Review, Payment
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login, authenticate
-from .forms import UserRegistrationForm, ReviewForm, BookingForm, PaymentForm, ConcertFilterForm
+from .forms import UserRegistrationForm, ReviewForm, BookingForm, PaymentForm, ConcertFilterForm, ConcertForm
 from django.contrib.auth import logout
 from django.db import IntegrityError, transaction
 from django.db.models import Avg
@@ -15,6 +15,8 @@ from django.middleware.csrf import get_token
 import random
 import time
 from django.db import models
+from django.views.decorators.http import require_POST
+from .utils import send_ticket_email
 
 def concert_list(request):
     concerts = Concert.objects.order_by('date')
@@ -222,7 +224,7 @@ def payment_view(request, seat_id):
                     payment = Payment.objects.create(
                         booking=booking,
                         payment_id=payment_id,
-                        amount=seat.concert.price,
+                        amount=seat.concert.vip_price if seat.is_vip else seat.concert.price,
                         is_successful=True,
                         card_last_digits=card_last_digits,
                     )
@@ -234,7 +236,17 @@ def payment_view(request, seat_id):
                     # Очищаем данные сессии
                     if 'booking_data' in request.session:
                         del request.session['booking_data']
-                    
+                    # Отправляем электронный билет
+                    try:
+                        send_ticket_email(
+                            booking.email,
+                            booking,
+                            seat,
+                            seat.concert,
+                            payment_id
+                        )
+                    except Exception as e:
+                        print(f"Ошибка отправки email: {e}")
                     messages.success(request, f'Оплата прошла успешно! Ваш билет забронирован. Номер платежа: {payment_id}')
                     return redirect('payment_success', payment_id=payment_id)
                     
@@ -249,7 +261,7 @@ def payment_view(request, seat_id):
         'seat': seat,
         'concert': seat.concert,
         'booking_data': booking_data,
-        'price': seat.concert.price
+        'price': seat.concert.vip_price if seat.is_vip else seat.concert.price
     })
 
 @login_required
@@ -425,3 +437,44 @@ def search_concerts_api(request):
             {'id': 992, 'title': f'Тестовое выступление по запросу "{query}"', 'date': '20.07.2024', 'price': '3000', 'image': ''}
         ]
         return JsonResponse(results, safe=False)
+
+def is_admin(user):
+    return user.is_staff or user.is_superuser
+
+@user_passes_test(is_admin)
+@login_required
+def admin_dashboard(request):
+    concerts = Concert.objects.order_by('-date')
+    if request.method == 'POST':
+        form = ConcertForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Концерт успешно создан!')
+            return redirect('admin_dashboard')
+    else:
+        form = ConcertForm()
+    return render(request, 'concerts/admin_dashboard.html', {'form': form, 'concerts': concerts})
+
+@user_passes_test(is_admin)
+@login_required
+def delete_concert(request, concert_id):
+    concert = get_object_or_404(Concert, id=concert_id)
+    if request.method == 'POST':
+        concert.delete()
+        messages.success(request, 'Концерт успешно удалён!')
+        return redirect('admin_dashboard')
+    return render(request, 'concerts/delete_concert.html', {'concert': concert})
+
+@user_passes_test(is_admin)
+@login_required
+def edit_concert(request, concert_id):
+    concert = get_object_or_404(Concert, id=concert_id)
+    if request.method == 'POST':
+        form = ConcertForm(request.POST, request.FILES, instance=concert)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Концерт успешно обновлён!')
+            return redirect('admin_dashboard')
+    else:
+        form = ConcertForm(instance=concert)
+    return render(request, 'concerts/edit_concert.html', {'form': form, 'concert': concert})
